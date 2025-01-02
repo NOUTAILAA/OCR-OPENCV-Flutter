@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.1.125:5001";
+  static const String baseUrl = "http://192.168.1.102:5001";
 
   static Future<String?> login(String email, String password) async {
     final response = await http.post(
@@ -28,5 +28,17 @@ class ApiService {
     );
 
     return response.statusCode == 201;
+  }
+
+
+
+  static Future<bool> forgotPassword(String email) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/forgot_password"),
+      body: jsonEncode({"email": email}),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    return response.statusCode == 200;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'signup_screen.dart';
 import 'upload_image.dart';
+import 'forgot_password_screen.dart';
 import '../utils/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (result != null) {
-      Fluttertoast.showToast(msg: "Login Successful!");
+      Fluttertoast.showToast(msg: "Connexion réussie !");
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -28,14 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
-      Fluttertoast.showToast(msg: "Login Failed!");
+      Fluttertoast.showToast(msg: "Échec de la connexion !");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Login")),
+      appBar: AppBar(title: Text("Connexion")),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -47,13 +48,22 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             TextField(
               controller: passwordController,
-              decoration: InputDecoration(labelText: "Password"),
+              decoration: InputDecoration(labelText: "Mot de passe"),
               obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: login,
-              child: Text("Login"),
+              child: Text("Connexion"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+                );
+              },
+              child: Text("Mot de passe oublié ?"),
             ),
             TextButton(
               onPressed: () {
@@ -62,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (context) => SignUpScreen()),
                 );
               },
-              child: Text("Don't have an account? Sign Up"),
+              child: Text("Pas encore de compte ? Inscrivez-vous"),
             ),
           ],
         ),

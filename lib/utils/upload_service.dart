@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 
 
 class ApiService {
-  static const String baseUrl = "http://192.168.1.125:5000";
+  static const String baseUrl = "http://192.168.1.102:5000";
 
 // Méthode d'upload d'image
  // Méthode d'upload d'image
