@@ -55,6 +55,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.blue.shade800),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
                   Text(
                     "Mot de passe oublié",
                     style: TextStyle(
