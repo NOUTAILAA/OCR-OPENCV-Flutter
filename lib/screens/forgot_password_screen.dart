@@ -2,26 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../utils/api_service.dart';
 
-class SignUpScreen extends StatefulWidget {
+class ForgotPasswordScreen extends StatefulWidget {
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
-  Future<void> register() async {
-    final result = await ApiService.register(
-      emailController.text,
-      passwordController.text,
-    );
+  Future<void> resetPassword() async {
+    final result = await ApiService.forgotPassword(emailController.text);
 
     if (result) {
-      Fluttertoast.showToast(msg: "Registration Successful! Check your email.");
+      Fluttertoast.showToast(msg: "Un email de réinitialisation a été envoyé.");
       Navigator.pop(context);
     } else {
-      Fluttertoast.showToast(msg: "Registration Failed!");
+      Fluttertoast.showToast(msg: "Email non trouvé !");
     }
   }
 
@@ -69,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                   Text(
-                    "Inscription",
+                    "Mot de passe oublié",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -78,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "Créez un compte pour continuer",
+                    "Entrez votre email pour recevoir un lien de réinitialisation",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -97,20 +93,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  TextField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: "Mot de passe",
-                      prefixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: register,
+                    onPressed: resetPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade800,
                       minimumSize: Size(double.infinity, 50),
@@ -119,7 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     child: Text(
-                      "S'inscrire",
+                      "Réinitialiser le mot de passe",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),

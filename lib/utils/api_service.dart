@@ -29,4 +29,13 @@ class ApiService {
 
     return response.statusCode == 201;
   }
+  static Future<bool> forgotPassword(String email) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/forgot_password"),
+      body: jsonEncode({"email": email}),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    return response.statusCode == 200;
+  }
 }
