@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 
 
 class ApiService {
-  static const String baseUrl = "http://192.168.1.102:5000";
+  static const String baseUrl = "http://192.168.11.113:5000";
 
 // Méthode d'upload d'image
  // Méthode d'upload d'image
@@ -50,7 +50,7 @@ class ApiService {
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Extraction de la partie JSON brute
         final dataString = responseBody;
         final startIndex = dataString.indexOf('{');
