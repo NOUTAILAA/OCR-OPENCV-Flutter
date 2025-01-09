@@ -14,8 +14,7 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['access_token'];
+      return response.body;
     }
     return null;
   }
@@ -38,4 +37,19 @@ class ApiService {
 
     return response.statusCode == 200;
   }
+
+  static Future<String?> verifyOtp(String email, String otp) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/verify_otp"),
+      body: jsonEncode({"email": email, "otp": otp}),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['access_token'];
+    }
+    return null;
+  }
+
 }
