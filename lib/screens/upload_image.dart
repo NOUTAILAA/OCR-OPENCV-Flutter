@@ -46,37 +46,45 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
   // Méthode d'upload d'image
   Future<void> uploadImage() async {
     if (_image == null && _webImage == null) {
-      Fluttertoast.showToast(msg: 'Please select an image first.');
+      if (kIsWeb) {
+        print("No image selected (Web).");
+      } else {
+        Fluttertoast.showToast(msg: 'Please select an image first.');
+      }
       return;
     }
 
     setState(() {
-      _isUploading = true;  // Démarrer le chargement
+      _isUploading = true;
     });
 
-    final result = await ApiService.uploadImage(
-      _image,
-      _webImage,
-      widget.token,
-    );
+    final result = await ApiService.uploadImage(_image, _webImage, widget.token);
 
     setState(() {
       _uploadStatus = result ?? 'Upload failed!';
-      _isUploading = false;  // Arrêter le chargement après l'upload
+      _isUploading = false;
     });
 
     // Décoder les données après upload réussi
-    if (result != null && result.contains('Data:')) {
+    if (result != null) {
       final startIndex = result.indexOf('{');
       final endIndex = result.lastIndexOf('}');
       if (startIndex != -1 && endIndex != -1) {
         try {
           final extracted = jsonDecode(result.substring(startIndex, endIndex + 1));
+
+          // Afficher les données dans la console Flutter
+          print("Données extraites du serveur : $extracted");
+
           setState(() {
             _extractedData = extracted;
           });
         } catch (e) {
-          Fluttertoast.showToast(msg: 'Error decoding data: $e');
+          if (kIsWeb) {
+            print("Error decoding data (Web): $e");
+          } else {
+            Fluttertoast.showToast(msg: 'Error decoding data: $e');
+          }
         }
       }
     }
@@ -88,6 +96,37 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => LoginScreen(),
+      ),
+    );
+  }
+
+  Widget buildDetailCard(String title, String value) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(
+          Icons.info,
+          color: Colors.blueAccent,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.black,
+          ),
+        ),
+        subtitle: Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black87,
+          ),
+        ),
       ),
     );
   }
@@ -125,14 +164,14 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                     height: 300,
                     child: _webImage == null && _image == null
                         ? Center(
-                            child: Text(
-                              'No image selected.',
-                              style: TextStyle(fontSize: 18, color: Colors.grey),
-                            ),
-                          )
+                      child: Text(
+                        'No image selected.',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                    )
                         : kIsWeb
-                            ? Image.memory(_webImage!, fit: BoxFit.cover)
-                            : Image.file(_image!, fit: BoxFit.cover),
+                        ? Image.memory(_webImage!, fit: BoxFit.cover)
+                        : Image.file(_image!, fit: BoxFit.cover),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -176,53 +215,40 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                 _isUploading
                     ? CircularProgressIndicator()
                     : ElevatedButton(
-                        onPressed: uploadImage,
-                        child: Text('Upload Image'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                SizedBox(height: 20),
-
-                Text(
-                  _uploadStatus,
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                  onPressed: uploadImage,
+                  child: Text('Upload Image'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20),
 
                 // Affichage des données extraites après l'upload
-            if (_extractedData != null)
-  Padding(
-    padding: const EdgeInsets.all(12.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: _extractedData!.entries.map((entry) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "${entry.key}: ",  // Clé (ex: nom)
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16),
-                ),
-                TextSpan(
-                  text: entry.value.toString(),  // Valeur (ex: TEARGAMMANE)
-                  style: TextStyle(color: Colors.black87, fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    ),
-  ),
-
+                if (_extractedData != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Afficher chaque clé de _extractedData dans une carte
+                        if (_extractedData!['ddn'] != null)
+                          buildDetailCard('Date de Naissance', _extractedData!['ddn']!),
+                        if (_extractedData!['nom'] != null)
+                          buildDetailCard('Nom', _extractedData!['nom']!),
+                        if (_extractedData!['prenom'] != null)
+                          buildDetailCard('Prénom', _extractedData!['prenom']!),
+                        if (_extractedData!['numcin'] != null)
+                          buildDetailCard('Numéro CIN', _extractedData!['numcin']!),
+                        if (_extractedData!['ville'] != null)
+                          buildDetailCard('Ville', _extractedData!['ville']!),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
@@ -230,4 +256,5 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
       ),
     );
   }
+
 }
