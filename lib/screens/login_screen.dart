@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'signup_screen.dart';
-import 'upload_image.dart';
 import 'forgot_password_screen.dart';
+import 'otp_screen.dart';
 import '../utils/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,15 +20,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (result != null) {
-      Fluttertoast.showToast(msg: "Connexion réussie !");
-      Navigator.pushReplacement(
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("OTP envoyé à votre email.")),
+      );
+      Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => UploadImageScreen(token: result),
+          builder: (context) => OtpScreen(email: emailController.text),
         ),
       );
     } else {
-      Fluttertoast.showToast(msg: "Échec de la connexion !");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Identifiants incorrects ou compte non vérifié.")),
+      );
     }
   }
 
